@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 import { authenticate, getChallenge } from "@/services/auth";
 import Cookies from "js-cookie";

@@ -4,6 +4,10 @@ const nextConfig = {
   //   // Will be available on both server and client
   //   NEXT_PUBLIC_MAPS_API_KEY: process.env.NEXT_PUBLIC_MAPS_API_KEY,
   // },
+  webpack: config => {
+    config.externals.push('pino-pretty', 'lokijs', 'encoding')
+    return config
+  },
   reactStrictMode: false,
   experimental: {
     appDir: true,

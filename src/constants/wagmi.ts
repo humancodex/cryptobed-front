@@ -1,25 +1,39 @@
-import {
-  EthereumClient,
-  w3mConnectors,
-  w3mProvider,
-} from "@web3modal/ethereum";
+import { walletConnectProvider } from "@web3modal/wagmi1";
+
 import { configureChains, createConfig } from "wagmi";
-import { mainnet, optimism, polygon } from "wagmi/chains";
+import { publicProvider } from "wagmi/providers/public";
+import { polygon } from "viem/chains";
+import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 
 if (!process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID) {
   throw new Error("You need to provide NEXT_PUBLIC_PROJECT_ID env variable");
 }
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID;
 
-const chains = [mainnet, polygon, optimism];
+// 2. Create wagmiConfig
+const { chains, publicClient } = configureChains(
+  [polygon],
+  [walletConnectProvider({ projectId }), publicProvider()]
+);
 
-const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
+const metadata = {
+  name: "Web3Modal",
+  description: "Web3Modal Example",
+  url: "https://web3modal.com",
+  icons: ["https://avatars.githubusercontent.com/u/37784886"],
+};
 
-export const appWagmiConfig = createConfig({
+export const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: w3mConnectors({ chains, projectId }),
+  connectors: [
+    new WalletConnectConnector({ chains, options: { projectId, showQrModal: false, metadata } }),
+  ],
   publicClient,
 });
 
-// 3. Configure modal ethereum client
-export const appEthereumClient = new EthereumClient(appWagmiConfig, chains);
+export const modalConfig = {
+  wagmiConfig,
+  projectId,
+  chains,
+  enableAnalytics: true, // Optional - defaults to your Cloud configuration
+};

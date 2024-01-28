@@ -3,8 +3,8 @@ import Logo from "@/shared/Logo";
 import Navigation from "@/shared/Navigation/Navigation";
 import ButtonPrimary from "@/shared/ButtonPrimary";
 import AvatarDropdown from "./AvatarDropdown";
-import { useAccount, useDisconnect } from "wagmi";
-import { useWeb3Modal } from "@web3modal/react";
+import { useAccount, useDisconnect, useWalletClient } from "wagmi";
+import { useWeb3Modal } from "@web3modal/wagmi1/react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePathname } from "next/navigation";
 import SearchFormMobile from "../(HeroSearchFormMobile)/SearchFormMobile";
@@ -18,9 +18,10 @@ export interface MainNav1Props {
 
 const MainNav: FC<MainNav1Props> = ({ className = "" }) => {
   const { address } = useAccount();
-  const { open, isOpen } = useWeb3Modal();
+  const { open } = useWeb3Modal();
   const { logOut, isAuth } = useAuth();
   const { disconnectAsync } = useDisconnect();
+
   const pathname = usePathname();
 
   const showSearch = useMemo(() => PAGE_WHIT_SEARCH.includes(pathname), [pathname]);
@@ -61,11 +62,7 @@ const MainNav: FC<MainNav1Props> = ({ className = "" }) => {
               <div className="px-1" />
 
               {!isAuth && (
-                <ButtonPrimary
-                  loading={isOpen}
-                  onClick={onConnectHandler}
-                  className="self-center sm:text-s sm:p-2"
-                >
+                <ButtonPrimary onClick={onConnectHandler} className="self-center sm:text-s sm:p-2">
                   Connect
                 </ButtonPrimary>
               )}

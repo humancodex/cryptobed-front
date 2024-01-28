@@ -50,7 +50,7 @@ const SendTransactionComponent: FC<SendTransactionComponentProps> = ({
       const tx = {
         to: token,
         data: dataEncoded,
-        chainId: 1,
+        chainId: Number(process.env.NEXT_PUBLIC_CHAIN_ID),
       };
 
       const { hash } = await sendTransactionAsync(tx);
@@ -68,15 +68,13 @@ const SendTransactionComponent: FC<SendTransactionComponentProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [ABI, amount, onTxError, onTxSent, paymentId, receiptAddress, token]);
+  }, [ABI, amount, onTxError, onTxSent, receiptAddress, sendTransactionAsync, token]);
 
   if (txHash) {
     return (
-      <>
-        <span className="flex-grow text-center text-sm font-medium text-neutral-700 ">
-          Transaction hash: {txHash}
-        </span>
-      </>
+      <span className="flex-grow text-center text-sm font-medium text-neutral-700 ">
+        Transaction hash: {txHash}
+      </span>
     );
   }
 

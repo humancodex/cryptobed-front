@@ -13,6 +13,8 @@ import { homeSettingsConst } from "@/constants/home";
 import { covertApolloResponseToStays } from "@/adapters/stay.adapters";
 import Logo from "@/shared/Logo";
 
+export const revalidate = 5;
+
 const query = gql`
   query StaysHome($address: String, $guests: Int) {
     stays(
@@ -71,9 +73,10 @@ async function PageHome({ searchParams }: PageHomeProps) {
   let items: Stay[] = [];
 
   const settings = homeSettingsConst["DEFAULT"];
+  const client = getClient();
 
   try {
-    const res = await getClient().query({
+    const res = await client.query({
       query,
       variables: { address: searchParams.location, guests: searchParams.guests },
     });

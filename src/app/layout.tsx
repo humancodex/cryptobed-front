@@ -10,9 +10,7 @@ import "rc-slider/assets/index.css";
 import Footer from "@/components/Footer";
 import FooterNav from "@/components/FooterNav";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { Web3Modal } from "@web3modal/react";
-import { WagmiConfig } from "wagmi";
-import { appEthereumClient, appWagmiConfig } from "@/constants/wagmi";
+import { Web3ModalProvider } from "@/contexts/Web3ModalProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -30,21 +28,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={poppins.className}>
       <body className="bg-white text-base dark:bg-neutral-900 text-neutral-900 dark:text-neutral-200">
-        <WagmiConfig config={appWagmiConfig}>
+        <Web3ModalProvider>
           <AuthProvider>
             <ClientCommons />
             <SiteHeader />
             {children}
             <FooterNav />
             <Footer />
-            <Web3Modal
-              projectId={
-                process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? ""
-              }
-              ethereumClient={appEthereumClient}
-            />
           </AuthProvider>
-        </WagmiConfig>
+        </Web3ModalProvider>
       </body>
     </html>
   );
