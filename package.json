@@ -24,7 +24,7 @@
     "@types/react-dom": "18.0.11",
     "@web3modal/ethereum": "^2.7.1",
     "@web3modal/react": "^2.7.1",
-    "@web3modal/siwe": "^3.6.0-544a28f1",
+    "@web3modal/siwe": "3.5.7",
     "@web3modal/wagmi1": "^4.0.0-544a28f1",
     "axios": "^1.4.0",
     "axios-hooks": "^4.0.0",
