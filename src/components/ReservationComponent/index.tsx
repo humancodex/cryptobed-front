@@ -191,8 +191,8 @@ const ReservationComponent: FC<ReservationComponentProps> = ({ stay }) => {
               {isSameOrigin && (
                 <div className="flex flex-col rounded-3xl pt-2 pb-2">
                   <h3 className="flex-grow text-center text-sm font-medium text-red-700 dark:text-neutral-300 sm:text-sm">
-                    The host address is the same as the guest&apos;s. Please
-                    check your connected MetaMask account.
+                    The host address is the same as the guest&apos;s. Please check your connected
+                    address.
                   </h3>
                 </div>
               )}

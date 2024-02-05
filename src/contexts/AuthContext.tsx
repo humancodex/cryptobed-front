@@ -1,11 +1,14 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { useAccount, useDisconnect, useSignMessage } from "wagmi";
+import { useAccount } from "wagmi";
 import { authenticate, getChallenge } from "@/services/auth";
 import Cookies from "js-cookie";
 import { getUserData } from "@/services/users";
 import { useRouter } from "next/navigation";
+import { wagmiConfig } from "@/constants/wagmi-config";
+import { signMessage, getAccount } from "@wagmi/core";
+import { disconnect } from "@wagmi/core";
 
 interface AuthContextType {
   isAuth: boolean;
@@ -27,13 +30,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [error, setError] = useState<any>(null);
 
   const { address, isConnected, isConnecting } = useAccount();
-  const { disconnectAsync } = useDisconnect();
-  const { signMessageAsync } = useSignMessage();
 
   const auth = useCallback(async () => {
     try {
       const jwtToken = Cookies.get("jwt");
-
       if (jwtToken) {
         setIsAuthenticating(true);
 
@@ -45,13 +45,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
 
         setIsAuth(true);
-        router.refresh();
         return;
       }
-
       const { token } = await getChallenge(address);
-      const signature = await signMessageAsync({
+
+      const { connector } = getAccount(wagmiConfig);
+
+      const signature = await signMessage(wagmiConfig, {
         message: "Your authentication token : " + token,
+        connector,
       });
       const { jwt } = await authenticate({
         signature,
@@ -61,20 +63,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       Cookies.set("jwt", jwt);
       setIsAuth(true);
     } catch (error) {
-      console.log(error);
       setError(error);
       await logOut();
     } finally {
       setIsAuthenticating(false);
-      router.refresh();
     }
-  }, [authenticate, getChallenge, signMessageAsync, address]);
+  }, [authenticate, getChallenge, signMessage, address]);
 
   const logOut = async () => {
-    disconnectAsync();
-    Cookies.remove("jwt");
-    setIsAuth(false);
-    router.refresh();
+    try {
+      await disconnect(wagmiConfig);
+      Cookies.remove("jwt");
+      setIsAuth(false);
+    } catch (err) {
+      setError(err);
+    }
   };
 
   useEffect(() => {

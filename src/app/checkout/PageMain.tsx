@@ -3,26 +3,21 @@
 import React, { FC, useMemo, useState } from "react";
 import convertSelectedDateToString from "@/utils/converSelectedDateToString";
 import { Book } from "@/interfaces/Booking";
-import SendTransactionComponent from "@/components/SendTransactionComponent";
+import SentTransactionComponent from "@/components/SendTransactionComponent";
 import { StrapiData } from "@/interfaces/Strapi";
 import { Payment, PaymentStatus } from "@/interfaces/Payment";
 import { usePaymentUpdate } from "@/hooks/usePayment";
 import CoinSymbolComponent from "@/components/CoinSymbolComponent";
 import { useRouter } from "next/navigation";
+import { Address } from "viem";
 
 export interface CheckOutPagePageMainProps {
   book: Book;
   className?: string;
 }
 
-const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({
-  className = "",
-  book,
-}) => {
-  const payment: StrapiData<Payment> = useMemo(
-    () => book.payment,
-    [book.payment]
-  );
+const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({ className = "", book }) => {
+  const payment: StrapiData<Payment> = useMemo(() => book.payment, [book.payment]);
   const router = useRouter();
   const [hashTx, setHashTx] = useState<string>(payment.data.attributes.txHash);
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -62,16 +57,14 @@ const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center">
           <div className="py-1 space-y-3">
             <div>
-              <span className="text-base font-medium block">
-                {book.stay.data.attributes.name}
-              </span>
+              <span className="text-base font-medium block">{book.stay.data.attributes.name}</span>
               <p className="text-sm text-neutral-500 mt-1 dark:text-neutral-400 line-clamp-1 break-words">
                 {book.stay.data.attributes.address}
               </p>
             </div>
             <span className="block  text-sm text-neutral-500 dark:text-neutral-400">
-              {book.stay.data.attributes.bedrooms} bedrooms ·{" "}
-              {book.stay.data.attributes.bathrooms} bathrooms
+              {book.stay.data.attributes.bedrooms} bedrooms · {book.stay.data.attributes.bathrooms}{" "}
+              bathrooms
             </span>
             <div className="w-100 border-b border-neutral-200  dark:border-neutral-700"></div>
           </div>
@@ -82,10 +75,8 @@ const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({
             <span>
               {/* TODO: Format currency */}
               {book.priceNight}{" "}
-              <CoinSymbolComponent
-                contractAddress={payment.data.attributes.contractAddress}
-              />{" "}
-              x {book.nights} nights
+              <CoinSymbolComponent contractAddress={payment.data.attributes.contractAddress} /> x{" "}
+              {book.nights} nights
             </span>
             <span>{book.total}</span>
           </div>
@@ -94,9 +85,7 @@ const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({
               <span>Deposit Guaranty</span>
               <span>
                 {book.payment.data.attributes.depositAmount}{" "}
-                <CoinSymbolComponent
-                  contractAddress={payment.data.attributes.contractAddress}
-                />
+                <CoinSymbolComponent contractAddress={payment.data.attributes.contractAddress} />
               </span>
             </div>
           )}
@@ -105,9 +94,7 @@ const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({
               <span>Cleaning Fee</span>
               <span>
                 {book.payment.data.attributes.cleaningServiceFee}{" "}
-                <CoinSymbolComponent
-                  contractAddress={payment.data.attributes.contractAddress}
-                />
+                <CoinSymbolComponent contractAddress={payment.data.attributes.contractAddress} />
               </span>
             </div>
           )}
@@ -125,19 +112,14 @@ const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({
   const renderMain = () => {
     return (
       <div className="w-full flex flex-col rounded-2xl border border-neutral-200 dark:border-neutral-700 space-y-8 px-0 sm:p-6 sm:mb-16 sm:mt-10 xl:p-8">
-        <h2 className="text-3xl lg:text-4xl font-semibold">
-          Confirm and payment
-        </h2>
+        <h2 className="text-3xl lg:text-4xl font-semibold">Confirm and payment</h2>
         <div className="border-b border-neutral-200 dark:border-neutral-700"></div>
         <div>
           <div>
             <h3 className="text-2xl font-semibold">Your trip dates</h3>
             <div className="flex flex-col mt-1.5">
               <span className="mt-1.5 text-lg text-neutral-400">
-                {convertSelectedDateToString([
-                  new Date(book.from),
-                  new Date(book.to),
-                ])}
+                {convertSelectedDateToString([new Date(book.from), new Date(book.to)])}
               </span>
             </div>
           </div>
@@ -155,13 +137,13 @@ const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({
 
           <div className="">
             <div className="pt-1">
-              <SendTransactionComponent
+              <SentTransactionComponent
                 paymentId={payment.data.id}
                 txHash={hashTx}
-                token={payment.data.attributes.contractAddress}
+                token={payment.data.attributes.contractAddress as Address}
                 ABI={payment.data.attributes.contractABI}
                 amount={payment.data.attributes.amount}
-                receiptAddress={payment.data.attributes.depositAddress}
+                receiptAddress={payment.data.attributes.depositAddress as Address}
                 onTxSent={onTxSentHandler}
                 onTxError={onTxErrorHandler}
               />

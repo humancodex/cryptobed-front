@@ -3,8 +3,8 @@ import Logo from "@/shared/Logo";
 import Navigation from "@/shared/Navigation/Navigation";
 import ButtonPrimary from "@/shared/ButtonPrimary";
 import AvatarDropdown from "./AvatarDropdown";
-import { useAccount, useDisconnect, useWalletClient } from "wagmi";
-import { useWeb3Modal } from "@web3modal/wagmi1/react";
+import { useAccount, useDisconnect } from "wagmi";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePathname } from "next/navigation";
 import SearchFormMobile from "../(HeroSearchFormMobile)/SearchFormMobile";
@@ -29,7 +29,7 @@ const MainNav: FC<MainNav1Props> = ({ className = "" }) => {
     async (event: any) => {
       event.preventDefault();
       await disconnectAsync();
-      open();
+      await open();
     },
     [open, disconnectAsync]
   );

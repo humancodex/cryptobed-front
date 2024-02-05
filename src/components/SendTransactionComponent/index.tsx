@@ -2,9 +2,14 @@
 
 import { FC, useCallback, useState } from "react";
 import ButtonPrimary from "@/shared/ButtonPrimary";
-import { useSendTransaction } from "wagmi";
 import { Interface } from "ethers";
+
 import { useAuth } from "@/contexts/AuthContext";
+import { sendTransaction, getConnections } from "@wagmi/core";
+import { Address } from "viem";
+import { wagmiConfig } from "@/constants/wagmi-config";
+import { useAccount } from "wagmi";
+import { polygon } from "viem/chains";
 
 const errorMaps: Record<string, string> = {
   UNPREDICTABLE_GAS_LIMIT: "Insufficient funds",
@@ -13,10 +18,10 @@ const errorMaps: Record<string, string> = {
 interface SendTransactionComponentProps {
   paymentId: string;
   txHash?: string;
-  token: string;
+  token: Address;
   ABI: Record<string, any>[];
   amount: number;
-  receiptAddress: string;
+  receiptAddress: Address;
   onTxSent?: (hash: string) => void;
   onTxError?: (error: any) => void;
 }
@@ -27,39 +32,44 @@ const SendTransactionComponent: FC<SendTransactionComponentProps> = ({
   token,
   ABI,
   amount,
-  paymentId,
   receiptAddress,
   txHash,
 }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const { address, isConnected, isConnecting } = useAccount();
 
   const { isAuth } = useAuth();
-  const { sendTransactionAsync } = useSendTransaction();
 
   const onSendTxHandler = useCallback(async () => {
     try {
       setLoading(true);
       setErrorMessage("");
 
+      if (!address) {
+        throw new Error("Invalid Address");
+      }
+
+      const connections = getConnections(wagmiConfig);
+
       const dataEncoded = new Interface(ABI).encodeFunctionData("transfer", [
         receiptAddress,
         amount,
       ]) as `0x${string}`;
 
-      const tx = {
-        to: token,
+      const hash = await sendTransaction(wagmiConfig, {
+        chainId: polygon.id,
+        connector: connections[0]?.connector,
         data: dataEncoded,
-        chainId: Number(process.env.NEXT_PUBLIC_CHAIN_ID),
-      };
-
-      const { hash } = await sendTransactionAsync(tx);
-
+        to: token,
+        value: 0,
+      });
       if (!onTxSent) {
         return;
       }
       onTxSent(hash);
     } catch (error) {
+      console.error(error);
       setErrorMessage("Send founds failed");
       if (!onTxError) {
         return;
@@ -68,7 +78,7 @@ const SendTransactionComponent: FC<SendTransactionComponentProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [ABI, amount, onTxError, onTxSent, receiptAddress, sendTransactionAsync, token]);
+  }, [ABI, amount, onTxError, onTxSent, receiptAddress, token]);
 
   if (txHash) {
     return (

@@ -1,5 +1,3 @@
-"use client";
-
 import { Poppins } from "next/font/google";
 import SiteHeader from "./(client-components)/(Header)/SiteHeader";
 import ClientCommons from "./ClientCommons";
@@ -11,6 +9,9 @@ import Footer from "@/components/Footer";
 import FooterNav from "@/components/FooterNav";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Web3ModalProvider } from "@/contexts/Web3ModalProvider";
+import { cookieToInitialState } from "@wagmi/core";
+import { wagmiConfig as config } from "@/constants/wagmi-config";
+import { headers } from "next/headers";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,10 +26,12 @@ export default function RootLayout({
   children: React.ReactNode;
   params: any;
 }) {
+  const initialState = cookieToInitialState(config, headers().get("cookie"));
+
   return (
     <html lang="en" className={poppins.className}>
       <body className="bg-white text-base dark:bg-neutral-900 text-neutral-900 dark:text-neutral-200">
-        <Web3ModalProvider>
+        <Web3ModalProvider initialState={initialState}>
           <AuthProvider>
             <ClientCommons />
             <SiteHeader />

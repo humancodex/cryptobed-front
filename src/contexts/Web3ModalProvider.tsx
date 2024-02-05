@@ -1,55 +1,34 @@
 "use client";
 
-import { createWeb3Modal } from "@web3modal/wagmi1/react";
-import { EIP6963Connector, walletConnectProvider } from "@web3modal/wagmi1";
+import React, { ReactNode } from "react";
 
-import { WagmiConfig, configureChains, createConfig } from "wagmi";
-import { publicProvider } from "wagmi/providers/public";
-import { polygon, polygonMumbai } from "viem/chains";
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
-import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
-import { InjectedConnector } from "wagmi/connectors/injected";
+import { createWeb3Modal } from "@web3modal/wagmi/react";
 
-if (!process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID) {
-  throw new Error("You need to provide NEXT_PUBLIC_PROJECT_ID env variable");
-}
-const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID;
-// 2. Create wagmiConfig
-const { chains, publicClient } = configureChains(
-  [polygon, polygonMumbai],
-  [walletConnectProvider({ projectId }), publicProvider()]
-);
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const metadata = {
-  name: "CryptoBed",
-  description: "The Web3 travel community",
-  url: "https://cryptobed.com",
-  icons: ["https://avatars.githubusercontent.com/u/37784886"],
-};
+import { State, WagmiProvider } from "wagmi";
+import { projectId, wagmiConfig } from "@/constants/wagmi-config";
 
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors: [
-    new WalletConnectConnector({ chains, options: { projectId, showQrModal: false, metadata } }),
-    new EIP6963Connector({ chains }),
-    new InjectedConnector({ chains, options: { shimDisconnect: true } }),
-    new CoinbaseWalletConnector({ chains, options: { appName: metadata.name } }),
-  ],
-  publicClient,
-});
+// Setup queryClient
+const queryClient = new QueryClient();
 
-// 3. Create modal
+// Create modal
 createWeb3Modal({
   wagmiConfig,
   projectId,
-  chains,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
 });
 
-interface Web3ModalProps {
-  children: React.ReactNode;
-}
-
-export function Web3ModalProvider({ children }: Web3ModalProps) {
-  return <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>;
+export function Web3ModalProvider({
+  children,
+  initialState,
+}: {
+  children: ReactNode;
+  initialState?: State;
+}) {
+  return (
+    <WagmiProvider config={wagmiConfig} initialState={initialState}>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </WagmiProvider>
+  );
 }
