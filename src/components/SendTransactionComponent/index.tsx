@@ -62,7 +62,7 @@ const SendTransactionComponent: FC<SendTransactionComponentProps> = ({
         connector: connections[0]?.connector,
         data: dataEncoded,
         to: token,
-        value: 0,
+        value: BigInt(0),
       });
       if (!onTxSent) {
         return;
