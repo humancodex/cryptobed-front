@@ -10,13 +10,46 @@ import { usePaymentUpdate } from "@/hooks/usePayment";
 import CoinSymbolComponent from "@/components/CoinSymbolComponent";
 import { useRouter } from "next/navigation";
 import { Address } from "viem";
+import { useEditUserData } from "@/hooks/useUser";
+import { useForm } from "react-hook-form";
+import { User } from "@/data/types";
+import { AccountDataRequest } from "../(account-pages)/profile/AccountContainer";
+import Label from "@/components/Label";
+import Input from "@/shared/Input";
+import ButtonPrimary from "@/shared/ButtonPrimary";
 
 export interface CheckOutPagePageMainProps {
   book: Book;
+  email?: string;
+  phoneNumber?: string;
   className?: string;
 }
 
-const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({ className = "", book }) => {
+const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({
+  className = "",
+  book,
+  email,
+  phoneNumber,
+}) => {
+  const [{ data, loading, error }, execute] = useEditUserData();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm<Partial<AccountDataRequest>>({
+    values: { email, phoneNumber } as Partial<User>,
+  });
+
+  const checkKeyDown = (e: any) => {
+    if (e.key === "Enter") e.preventDefault();
+  };
+
+  const onSubmit = (data: Partial<AccountDataRequest>) => {
+    execute({
+      data,
+    });
+  };
   const payment: StrapiData<Payment> = useMemo(() => book.payment, [book.payment]);
   const router = useRouter();
   const [hashTx, setHashTx] = useState<string>(payment.data.attributes.txHash);
@@ -112,6 +145,9 @@ const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({ className = "", b
   const renderMain = () => {
     return (
       <div className="w-full flex flex-col rounded-2xl border border-neutral-200 dark:border-neutral-700 space-y-8 px-0 sm:p-6 sm:mb-16 sm:mt-10 xl:p-8">
+        <h2 className="text-3xl lg:text-4xl font-semibold">Contact Information</h2>
+        <EmailForm />
+
         <h2 className="text-3xl lg:text-4xl font-semibold">Confirm and payment</h2>
         <div className="border-b border-neutral-200 dark:border-neutral-700"></div>
         <div>
@@ -138,6 +174,7 @@ const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({ className = "", b
           <div className="">
             <div className="pt-1">
               <SentTransactionComponent
+                disabled={!isValid}
                 paymentId={payment.data.id}
                 txHash={hashTx}
                 token={payment.data.attributes.contractAddress as Address}
@@ -150,6 +187,51 @@ const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({ className = "", b
             </div>
           </div>
         </div>
+      </div>
+    );
+  };
+
+  const EmailForm = () => {
+    return (
+      <div>
+        <form onSubmit={handleSubmit(onSubmit)} onKeyDown={checkKeyDown}>
+          {/* HEADING */}
+          <div className="flex flex-col md:flex-row sm:pt-2">
+            <div className="flex-grow md:mt-0 max-w-3xl space-y-6">
+              <div>
+                <Label>Email</Label>
+                <Input
+                  className="mt-1.5"
+                  placeholder="add your mail"
+                  type="email"
+                  {...register("email", { required: true })}
+                />
+              </div>
+              {/* ---- */}
+              <div>
+                <Label>Phone Number (optional)</Label>
+                <Input
+                  className="mt-1.5"
+                  placeholder="example: +549123123123"
+                  {...register("phoneNumber", { required: false })}
+                />
+              </div>
+              <div className="text-xs pt-1 lg:text-sm">
+                These changes will affect your profile data.
+              </div>
+              <div className="pt-2">
+                <ButtonPrimary loading={loading} disabled={loading} className="sm:w-full">
+                  {email ? "Please add your email" : "Update contact data"}
+                </ButtonPrimary>
+              </div>
+              <div className="text-center">
+                <div className="text-red-700 px-4 py-3 rounded relative" role="alert">
+                  {error?.message ? "Ops! Someone is not ok." : null}
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
     );
   };

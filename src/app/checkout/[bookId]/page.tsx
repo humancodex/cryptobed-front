@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import CheckOutPagePageMain from "../PageMain";
 import { cookies } from "next/headers";
 import { RedirectType } from "next/dist/client/components/redirect";
+import { getUserDataSSR } from "@/services/users";
 
 export interface CheckoutPageProps {
   params: {
@@ -19,8 +20,11 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       redirect("/", RedirectType.replace);
     }
 
+    const { data } = await getUserDataSSR(jwt.value);
     const book = await findBookById(params.bookId, jwt.value);
-    return <CheckOutPagePageMain book={book} />;
+
+    const { email, phoneNumber } = data;
+    return <CheckOutPagePageMain book={book} email={email} phoneNumber={phoneNumber} />;
   } catch (error) {
     notFound();
   }

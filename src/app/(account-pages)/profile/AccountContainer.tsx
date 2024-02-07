@@ -40,9 +40,7 @@ const AccountContainer: FC<AccountContainerProps> = ({ user }) => {
     <div className="space-y-6 sm:space-y-8">
       <form onSubmit={handleSubmit(onSubmit)} onKeyDown={checkKeyDown}>
         {/* HEADING */}
-        <h2 className="text-3xl font-semibold sm:hidden">
-          Account Information
-        </h2>
+        <h2 className="text-3xl font-semibold sm:hidden">Account Information</h2>
         <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mt-4 sm:hidden"></div>
         <div className="flex flex-col md:flex-row pt-10 sm:pt-2">
           <div className="flex-grow md:mt-0 md:pl-16 max-w-3xl space-y-6">
@@ -65,10 +63,7 @@ const AccountContainer: FC<AccountContainerProps> = ({ user }) => {
             </div>
             <div>
               <Label>About you</Label>
-              <Textarea
-                className="mt-1.5"
-                {...register("about", { required: false })}
-              />
+              <Textarea className="mt-1.5" {...register("about", { required: false })} />
             </div>
             <div className="pt-2">
               <ButtonPrimary loading={loading} disabled={loading}>
@@ -76,10 +71,7 @@ const AccountContainer: FC<AccountContainerProps> = ({ user }) => {
               </ButtonPrimary>
             </div>
             <div className="text-center">
-              <div
-                className="text-red-700 px-4 py-3 rounded relative"
-                role="alert"
-              >
+              <div className="text-red-700 px-4 py-3 rounded relative" role="alert">
                 {error?.message ? "Ops! Someone is not ok." : null}
               </div>
             </div>

@@ -1,14 +1,14 @@
 "use client";
 
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import ButtonPrimary from "@/shared/ButtonPrimary";
 import { Interface } from "ethers";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { sendTransaction, getConnections } from "@wagmi/core";
-import { Address } from "viem";
+import { sendTransaction, getConnections, getBalance } from "@wagmi/core";
+import { Address, formatUnits, parseUnits } from "viem";
 import { wagmiConfig } from "@/constants/wagmi-config";
-import { useAccount } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import { polygon } from "viem/chains";
 
 const errorMaps: Record<string, string> = {
@@ -16,6 +16,7 @@ const errorMaps: Record<string, string> = {
 };
 
 interface SendTransactionComponentProps {
+  disabled: boolean;
   paymentId: string;
   txHash?: string;
   token: Address;
@@ -29,17 +30,41 @@ interface SendTransactionComponentProps {
 const SendTransactionComponent: FC<SendTransactionComponentProps> = ({
   onTxError,
   onTxSent,
+  disabled,
   token,
   ABI,
   amount,
   receiptAddress,
   txHash,
 }) => {
+  const [symbol, setSymbol] = useState("--");
+  const [noFunds, setNoFunds] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const { address, isConnected, isConnecting } = useAccount();
+  const { address, isConnected } = useAccount();
 
   const { isAuth } = useAuth();
+
+  useEffect(() => {}, []);
+
+  const getWalletBalance = useCallback(async () => {
+    if (!address) {
+      return;
+    }
+
+    const balance = await getBalance(wagmiConfig, {
+      address,
+      token,
+    });
+
+    setSymbol(balance.symbol);
+    setNoFunds(amount > balance.value);
+    return balance;
+  }, [address]);
+
+  useEffect(() => {
+    getWalletBalance();
+  }, []);
 
   const onSendTxHandler = useCallback(async () => {
     try {
@@ -50,15 +75,14 @@ const SendTransactionComponent: FC<SendTransactionComponentProps> = ({
         throw new Error("Invalid Address");
       }
 
+      await getWalletBalance();
       const connections = getConnections(wagmiConfig);
-
       const dataEncoded = new Interface(ABI).encodeFunctionData("transfer", [
         receiptAddress,
         amount,
       ]) as `0x${string}`;
 
       const hash = await sendTransaction(wagmiConfig, {
-        chainId: polygon.id,
         connector: connections[0]?.connector,
         data: dataEncoded,
         to: token,
@@ -93,11 +117,24 @@ const SendTransactionComponent: FC<SendTransactionComponentProps> = ({
       <ButtonPrimary
         className="sm:w-full"
         loading={loading}
-        disabled={!isAuth}
+        disabled={!isAuth || noFunds || disabled}
         onClick={onSendTxHandler}
       >
         Send Crypto
       </ButtonPrimary>
+
+      {noFunds && (
+        <h3 className="flex-grow text-left text-sm font-medium text-red-700 mt-1 sm:w-full sm:text-center sm:text-sm">
+          Oops! It looks like you need a bit more tokens, around {formatUnits(BigInt(amount), 6)}{" "}
+          {symbol}, to book your stay.
+        </h3>
+      )}
+
+      {!isConnected && (
+        <h3 className="flex-grow text-left text-sm font-medium text-red-700 mt-1 sm:w-full sm:text-center sm:text-sm">
+          Please, connect your wallet.
+        </h3>
+      )}
 
       <h3 className="flex-grow text-left text-sm font-medium text-red-700 mt-1 sm:w-full sm:text-center sm:text-sm">
         {errorMessage}

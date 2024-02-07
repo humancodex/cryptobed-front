@@ -9,6 +9,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { usePathname } from "next/navigation";
 import SearchFormMobile from "../(HeroSearchFormMobile)/SearchFormMobile";
 import { ApolloWrapper } from "@/contexts/ApolloProvider";
+import PolygonLogo from "@/images/logos/polygon-white.svg";
+import Image from "next/image";
 
 const PAGE_WHIT_SEARCH: string[] = ["/"];
 
@@ -62,8 +64,12 @@ const MainNav: FC<MainNav1Props> = ({ className = "" }) => {
               <div className="px-1" />
 
               {!isAuth && (
-                <ButtonPrimary onClick={onConnectHandler} className="self-center sm:text-s sm:p-2">
-                  Connect
+                <ButtonPrimary
+                  onClick={onConnectHandler}
+                  className="self-center sm:text-s sm:p-2 md:px-4 md:py-1"
+                >
+                  <Image src={PolygonLogo} alt="" className="h-9 w-9 mr-0.5 sm:h-6" />
+                  <span className="sm:text-s mr-2">Connect</span>
                 </ButtonPrimary>
               )}
 
