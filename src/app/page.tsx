@@ -6,20 +6,18 @@ import SectionGridHasMap from "./listing/SectionGridHasMap";
 import SectionHeroArchivePage from "./(server-components)/SectionHeroArchivePage";
 import CryptoBedSeo from "@/constants/seo";
 import { Metadata } from "next";
-import { headers } from "next/headers";
 import { gql } from "@apollo/client";
 import { getClient } from "@/utils/apollo";
 import { homeSettingsConst } from "@/constants/home";
 import { covertApolloResponseToStays } from "@/adapters/stay.adapters";
-import Logo from "@/shared/Logo";
 
-export const revalidate = 5;
+export const revalidate = 2;
 
 const query = gql`
   query StaysHome($address: String, $guests: Int) {
     stays(
       filters: { address: { containsi: $address }, maxGuests: { gte: $guests } }
-      pagination: { page: 1, pageSize: 10 }
+      pagination: { page: 1, pageSize: 100 }
     ) {
       data {
         id

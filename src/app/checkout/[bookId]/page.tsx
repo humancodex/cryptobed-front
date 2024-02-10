@@ -20,8 +20,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       redirect("/", RedirectType.replace);
     }
 
-    const { data } = await getUserDataSSR(jwt.value);
-    const book = await findBookById(params.bookId, jwt.value);
+    const [{ data }, book] = await Promise.all([
+      getUserDataSSR(jwt.value),
+      findBookById(params.bookId, jwt.value),
+    ]);
 
     const { email, phoneNumber } = data;
     return <CheckOutPagePageMain book={book} email={email} phoneNumber={phoneNumber} />;
