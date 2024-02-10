@@ -127,12 +127,11 @@ const ReservationComponent: FC<ReservationComponentProps> = ({ stay }) => {
     to?: Date | null;
     nights: number;
   }) => {
-    setNights(nights);
-
     if (!from || !to) {
       return;
     }
 
+    setNights(nights);
     setValue("from", formatDateWithoutTime(from));
     setValue("to", formatDateWithoutTime(to));
     setStartDate(from);
