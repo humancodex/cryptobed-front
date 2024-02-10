@@ -19,8 +19,8 @@ export type BookResponse = StrapiData<Book>;
 
 export interface Book {
   id: string;
-  from: Date;
-  to: Date;
+  from: string;
+  to: string;
   priceNight: number;
   total: number;
   guestAdults: number;

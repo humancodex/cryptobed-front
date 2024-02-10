@@ -139,7 +139,7 @@ const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({
             <h3 className="text-2xl font-semibold">Your trip dates</h3>
             <div className="flex flex-col mt-1.5">
               <span className="mt-1.5 text-lg text-neutral-400">
-                {convertSelectedDateToString([new Date(book.from), new Date(book.to)])}
+                {convertSelectedDateToString(book.from, book.to)}
               </span>
             </div>
           </div>

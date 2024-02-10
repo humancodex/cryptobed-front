@@ -65,35 +65,27 @@ const MyBookingsPage: FC<MyBookingsProps> = ({ books, booksHost }) => {
             <Tab.Panel key={tabs.guest}>
               <div>
                 <div className="mt-8 sm:mt-0 grid grid-cols-2 sm:grid-cols-1 gap-6 md:gap-7">
-                  {booksResults
-                    .filter((_, i) => i < 4)
-                    .map((book) => (
-                      <BookCard
-                        key={book.id}
-                        book={{ ...book.attributes, id: book.id }}
-                      />
-                    ))}
+                  {booksResults.map((book) => (
+                    <BookCard key={book.id} book={{ ...book.attributes, id: book.id }} />
+                  ))}
                 </div>
-                <div className="flex mt-11 justify-center items-center">
+                {/* <div className="flex mt-11 justify-center items-center">
                   <ButtonSecondary>Show me more</ButtonSecondary>
-                </div>
+                </div> */}
               </div>
             </Tab.Panel>
             <Tab.Panel key={tabs.host}>
               <div>
                 <div className="mt-8 sm:mt-0 grid grid-cols-2 sm:grid-cols-1 gap-6 md:gap-7">
                   {booksHostResults
-                    .filter((_, i) => i < 4)
+                    // .filter((_, i) => i < 4)
                     .map((book) => (
-                      <BookCard
-                        key={book.id}
-                        book={{ ...book.attributes, id: book.id }}
-                      />
+                      <BookCard key={book.id} book={{ ...book.attributes, id: book.id }} />
                     ))}
                 </div>
-                <div className="flex mt-11 justify-center items-center">
+                {/* <div className="flex mt-11 justify-center items-center">
                   <ButtonSecondary>Show me more</ButtonSecondary>
-                </div>
+                </div> */}
               </div>
             </Tab.Panel>
           </Tab.Panels>
