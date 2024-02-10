@@ -76,7 +76,7 @@ const MyBookingsPage: FC<MyBookingsProps> = ({ books, booksHost }) => {
             </Tab.Panel>
             <Tab.Panel key={tabs.host}>
               <div>
-                <div className="mt-8 sm:mt-0 grid grid-cols-2 sm:grid-cols-1 gap-6 md:gap-7">
+                <div className="mt-8 sm:mt-0 grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-6 md:gap-7">
                   {booksHostResults
                     // .filter((_, i) => i < 4)
                     .map((book) => (
@@ -116,7 +116,8 @@ const MyBookingsPage: FC<MyBookingsProps> = ({ books, booksHost }) => {
   };
 
   return (
-    <div className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pl-10 flex-shrink-0">
+    // <div className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pl-10 flex-shrink-0">
+    <div className="w-full space-y-8 lg:space-y-10 lg:pl-10 flex-shrink-0">
       {renderSection1()}
       {/* {renderSection2()} */}
     </div>

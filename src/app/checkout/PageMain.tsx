@@ -126,6 +126,10 @@ const CheckOutPagePageMain: FC<CheckOutPagePageMainProps> = ({
     return (
       <div className="w-full flex flex-col rounded-2xl border border-neutral-200 dark:border-neutral-700 space-y-8 px-0 sm:p-6 sm:mb-16 sm:mt-10 xl:p-8">
         <h2 className="text-3xl lg:text-4xl font-semibold">Contact Information</h2>
+        <span className="mt-1.5 text-lg text-neutral-400">
+          The Host will contact you soon through your contact information.<br></br> Don’t worry if
+          the Host has some delay, your funds are blocked until check-in.
+        </span>
         <CheckOutEmailForm
           email={email}
           phoneNumber={phoneNumber}
