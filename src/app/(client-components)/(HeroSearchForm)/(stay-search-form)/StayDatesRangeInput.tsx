@@ -67,9 +67,7 @@ const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
             }`}
           >
             {renderInput()}
-            {startDate && open && (
-              <ClearDataButton onClick={() => onChangeDate([null, null])} />
-            )}
+            {startDate && open && <ClearDataButton onClick={() => onChangeDate([null, null])} />}
           </Popover.Button>
 
           {open && (
@@ -96,9 +94,7 @@ const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
                   monthsShown={2}
                   showPopperArrow={false}
                   inline
-                  renderCustomHeader={(p) => (
-                    <DatePickerCustomHeaderTwoMonth {...p} />
-                  )}
+                  renderCustomHeader={(p) => <DatePickerCustomHeaderTwoMonth {...p} />}
                   renderDayContents={(day, date) => (
                     <DatePickerCustomDay dayOfMonth={day} date={date} />
                   )}

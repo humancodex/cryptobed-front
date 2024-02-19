@@ -16,10 +16,14 @@ export interface LocationInputProps {
   divHideVerticalLineClass?: string;
   autoFocus?: boolean;
   onChange?: (item: string) => void;
+  onSelect?: (item: string) => void;
+  onClear?: () => void;
 }
 
 const LocationInput: FC<LocationInputProps> = ({
+  onSelect,
   onChange,
+  onClear,
   autoFocus = false,
   placeHolder = "Location",
   desc = "Where are you going?",
@@ -85,7 +89,7 @@ const LocationInput: FC<LocationInputProps> = ({
   const handleSelectLocation = (item: string) => {
     setSearchValue(item);
     setShowPopover(false);
-    onChange && onChange(item);
+    onSelect && onSelect(item);
   };
 
   const renderSearchValue = () => {
@@ -114,6 +118,11 @@ const LocationInput: FC<LocationInputProps> = ({
     );
   };
 
+  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.currentTarget.value);
+    onChange && onChange(event.currentTarget.value);
+  };
+
   return (
     <div className={`relative flex ${className}`} ref={containerRef}>
       <div
@@ -131,9 +140,7 @@ const LocationInput: FC<LocationInputProps> = ({
             placeholder={placeHolder}
             value={searchValue}
             autoFocus={showPopover}
-            onChange={(e) => {
-              setSearchValue(e.currentTarget.value);
-            }}
+            onChange={onChangeHandler}
             ref={inputRef}
           />
           <span className="block mt-0.5 text-sm text-neutral-400 font-light ">
@@ -143,6 +150,7 @@ const LocationInput: FC<LocationInputProps> = ({
             <ClearDataButton
               onClick={() => {
                 setSearchValue("");
+                onClear && onClear();
               }}
             />
           )}
