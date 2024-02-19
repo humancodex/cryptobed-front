@@ -24,11 +24,11 @@ export default async function MyBookings({}: MyBookingsProps) {
       redirect("/", RedirectType.replace);
     }
 
-    const books = await findUsersBookingsSSR(jwt.value, { populate: "*" });
-    const booksHost = await findHostBookingsSSR(jwt.value, { populate: "*" });
-    return (
-      <MyBookingsContainer books={books.data} booksHost={booksHost.data} />
-    );
+    const [books, booksHost] = await Promise.all([
+      findUsersBookingsSSR(jwt.value, { populate: "*" }),
+      findHostBookingsSSR(jwt.value, { populate: "*" }),
+    ]);
+    return <MyBookingsContainer books={books.data} booksHost={booksHost.data} />;
   } catch (error) {
     console.log(error);
     notFound();

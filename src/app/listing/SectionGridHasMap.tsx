@@ -24,7 +24,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = ({ items }) => {
     <div>
       <div className="relative flex min-h-screen">
         {/* CARDS */}
-        <div className="min-h-screen w-full xl:w-[60%] 2xl:w-[60%] max-w-[1184px] flex-shrink-0 xl:px-8 ">
+        <div className="min-h-screen w-full flex-shrink-0 xl:px-8 ">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 2xl:gap-x-6 gap-y-8">
             {items.map((item) => (
               <div

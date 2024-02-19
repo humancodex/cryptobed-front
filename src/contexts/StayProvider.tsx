@@ -16,7 +16,7 @@ interface StayProviderProps {
 
 export const StayProvider: React.FC<StayProviderProps> = ({ children }) => {
   const [stayData, setStayData] = useState<Partial<StayPayloadRequest>>(
-    localStorage.getItem("stayData")
+    typeof localStorage !== undefined && localStorage?.getItem("stayData")
       ? JSON.parse(localStorage.getItem("stayData") as string)
       : {}
   );
@@ -25,11 +25,7 @@ export const StayProvider: React.FC<StayProviderProps> = ({ children }) => {
     localStorage.setItem("stayData", JSON.stringify(stayData));
   }, [stayData]);
 
-  return (
-    <StayContext.Provider value={{ stayData, setStayData }}>
-      {children}
-    </StayContext.Provider>
-  );
+  return <StayContext.Provider value={{ stayData, setStayData }}>{children}</StayContext.Provider>;
 };
 
 export const useStay = (): StayContextData => {

@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+
 import { FC } from "react";
 import { StayProvider } from "@/contexts/StayProvider";
 
@@ -20,9 +21,7 @@ const CommonLayout: FC<CommonLayoutProps> = ({ children, params }) => {
         <div className="space-y-11">
           <div>
             <span className="text-4xl font-semibold">{index}</span>{" "}
-            <span className="text-lg text-neutral-500 dark:text-neutral-400">
-              / 8
-            </span>
+            <span className="text-lg text-neutral-500 dark:text-neutral-400">/ 8</span>
           </div>
 
           <div className="listingSection__wrap ">{children}</div>
