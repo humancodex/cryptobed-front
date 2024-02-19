@@ -69,10 +69,7 @@ export default function GallerySlider({
         opacity: { duration: 0.2 },
       }}
     >
-      <div
-        className={`relative group group/cardGallerySlider ${className}`}
-        {...handlers}
-      >
+      <div className={`relative group group/cardGallerySlider ${className}`} {...handlers}>
         {/* Main image */}
         <div className={`w-full overflow-hidden ${galleryClass}`}>
           <Link
@@ -90,7 +87,11 @@ export default function GallerySlider({
                 className="absolute inset-0"
               >
                 <Image
-                  src={currentImage?.attributes?.formats?.small.url ?? ""}
+                  src={
+                    currentImage?.attributes?.formats?.small?.url ??
+                    currentImage?.attributes?.url ??
+                    ""
+                  }
                   fill
                   alt="listing card gallery"
                   className={`object-cover ${imageClass}`}
@@ -133,9 +134,7 @@ export default function GallerySlider({
           <div className="flex items-center justify-center absolute bottom-2 left-1/2 transform -translate-x-1/2 space-x-1.5">
             {images.map((_, i) => (
               <button
-                className={`w-1.5 h-1.5 rounded-full ${
-                  i === index ? "bg-white" : "bg-white/60 "
-                }`}
+                className={`w-1.5 h-1.5 rounded-full ${i === index ? "bg-white" : "bg-white/60 "}`}
                 onClick={() => changePhotoId(i)}
                 key={i}
               />
